@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Celebrity = require("../models/Celebrity");
+const Movie = require("../models/Movie");
 
 router.get("/celebrities", (req, res, next) => {
   Celebrity.find()
@@ -14,7 +15,6 @@ router.get("/celebrities", (req, res, next) => {
 });
 
 router.get("/celebrities/new", (req, res) => {
-  console.log("what is going on");
   res.render("celebrities/new");
 });
 
@@ -30,7 +30,7 @@ router.get("/celebrities/:id", (req, res, next) => {
     });
 });
 
-router.post("/celebrities", (req, res) => {
+router.post("/celebrities", (req, res, next) => {
   const { name, occupation, catchphrase } = req.body;
   Celebrity.create({
     name: name,
@@ -78,8 +78,42 @@ router.post("/celebrities/:id", (req, res, next) => {
     catchphrase: catchphrase,
   })
     .then(() => {
-      console.log("hot spuds");
       res.redirect(`/celebrities`);
+    })
+    .catch((error) => {
+      next(error);
+    });
+});
+
+router.get("/movies/new", (req, res) => {
+  Celebrity.find().then((celebritiesFromDB) => {
+    res.render("movies/new", { celebrities: celebritiesFromDB });
+  });
+});
+
+router.post("/movies", (req, res) => {
+  const { title, genre, plot, cast } = req.body;
+  Movie.create({
+    title: title,
+    genre: genre,
+    plot: plot,
+    cast: cast,
+  })
+    .then((movie) => {
+      console.log(`New movie was created: ${movie}`);
+      res.redirect(`/movies/`);
+    })
+    .catch((error) => {
+      next(error);
+    });
+});
+
+router.get("/movies", (req, res, next) => {
+  Movie.find()
+
+    .then((moviesFromDB) => {
+      //   console.log(moviesFromDB);
+      res.render("movies", { moviesList: moviesFromDB });
     })
     .catch((error) => {
       next(error);
