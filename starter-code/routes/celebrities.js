@@ -72,7 +72,7 @@ router.post("/celebrities/:id/delete", (req, res, next) => {
 router.post("/celebrities/:id", (req, res, next) => {
   const { name, occupation, catchphrase } = req.body;
   const id = req.params.id;
-  Book.findByIdAndUpdate(id, {
+  Celebrity.findByIdAndUpdate(id, {
     name: name,
     occupation: occupation,
     catchphrase: catchphrase,
